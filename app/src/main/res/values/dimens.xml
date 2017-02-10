@@ -3,9 +3,9 @@
     <dimen name="size_progressWidth">12dp</dimen>
     <dimen name="size_betweenText">16sp</dimen>
     <dimen name="size_centerText">34sp</dimen>
-    <dimen name="size_centerSmallText">16sp</dimen>
     <dimen name="size_canvasMargin">-130dp</dimen>
     <dimen name="size_arcProgressHeight">70dp</dimen>
     <dimen name="size_centerTextBottomMargin">-10dp</dimen>
+    <dimen name="size_centerSmallText">16sp</dimen>
     <dimen name="size_centerTextSpace">6dp</dimen>
 </resources>

@@ -314,16 +314,16 @@ public class ArcProgressBar extends View {
     /**
      * 设置当前的进度值
      *
-     * @param currentSweepAngle
+     * @param currentValue
      */
-    public void setCurrentSweepAngle(float currentSweepAngle) {
-        sendCurrentProgress = currentSweepAngle < 0 ? 0 : currentSweepAngle;
-        if (currentSweepAngle < 1) {
-            currentSweepAngle = 1;
-        } else if (currentSweepAngle > maxProgress) {
-            currentSweepAngle = maxProgress;
+    public void setCurrentValue(float currentValue) {
+        sendCurrentProgress = currentValue < 0 ? 0 : currentValue;
+        if (currentValue < 1) {
+            currentValue = 1;
+        } else if (currentValue > maxProgress) {
+            currentValue = maxProgress;
         }
-        this.currentSweepAngle = currentSweepAngle * sweepAngle / maxProgress;
+        this.currentSweepAngle = currentValue * sweepAngle / maxProgress;
         initListener();
         initHandler();
         initAnimator();

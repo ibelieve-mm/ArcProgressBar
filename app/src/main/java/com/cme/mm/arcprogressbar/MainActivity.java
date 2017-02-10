@@ -17,6 +17,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        arcProgressBar.setCurrentSweepAngle(32200);
+        arcProgressBar.setCurrentValue(32200);
     }
 }
