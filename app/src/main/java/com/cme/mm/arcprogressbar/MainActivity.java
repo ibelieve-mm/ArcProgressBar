@@ -11,12 +11,12 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         arcProgressBar = (ArcProgressBar) findViewById(R.id.percent_view2);
 
-        arcProgressBar.setMaxProgress(8000);
+        arcProgressBar.setMaxProgress(3000);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        arcProgressBar.setCurrentSweepAngle(3200);
+        arcProgressBar.setCurrentSweepAngle(32200);
     }
 }

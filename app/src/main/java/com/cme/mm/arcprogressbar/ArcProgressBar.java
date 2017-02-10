@@ -36,6 +36,7 @@ public class ArcProgressBar extends View {
     private Paint textPaintLeft;
     private Paint textPaintRight;
     private Paint textPaintCenter;
+    private Paint textPaintCenterSmall;
 
     /**
      * 进度的画笔
@@ -73,6 +74,11 @@ public class ArcProgressBar extends View {
     private float centerTextSize;
 
     /**
+     * 中间文字的大小
+     */
+    private float centerSmallTextSize;
+
+    /**
      * 控件左右的边距
      */
     private float canvasMarginSize;
@@ -83,9 +89,14 @@ public class ArcProgressBar extends View {
     private float arcProgressHeight;
 
     /**
-     * 中间字体的的下边距
+     * 中间最后一行文字距弧形进度条底边的距离
      */
     private float centerTextBottomMargin;
+
+    /**
+     * 中间两行字的间距
+     */
+    private float centerTextSpace;
 
     /**
      * 总的扫过的角度
@@ -146,9 +157,11 @@ public class ArcProgressBar extends View {
         arcBackgroundColor = context.getResources().getColor(R.color.color_arcBackground);
         betweenTextSize = context.getResources().getDimensionPixelOffset(R.dimen.size_betweenText);
         centerTextSize = context.getResources().getDimensionPixelOffset(R.dimen.size_centerText);
+        centerSmallTextSize = context.getResources().getDimensionPixelOffset(R.dimen.size_centerSmallText);
         canvasMarginSize = context.getResources().getDimensionPixelOffset(R.dimen.size_canvasMargin);
         arcProgressHeight = context.getResources().getDimensionPixelOffset(R.dimen.size_arcProgressHeight);
         centerTextBottomMargin = context.getResources().getDimensionPixelOffset(R.dimen.size_centerTextBottomMargin);
+        centerTextSpace = context.getResources().getDimensionPixelOffset(R.dimen.size_centerTextSpace);
         arcWidth = context.getResources().getDimensionPixelOffset(R.dimen.size_progressWidth);
         padding = context.getResources().getDimensionPixelOffset(R.dimen.size_progressTopPadding);
         sweepAngle = 180 + 2 * endAngel;
@@ -160,6 +173,12 @@ public class ArcProgressBar extends View {
         textPaintCenter.setTextSize(centerTextSize);
         textPaintCenter.setColor(Color.RED);
         textPaintCenter.setTextAlign(Paint.Align.CENTER);
+
+        textPaintCenterSmall = new Paint();
+        textPaintCenterSmall.setAntiAlias(true);
+        textPaintCenterSmall.setTextSize(centerSmallTextSize);
+        textPaintCenterSmall.setColor(Color.RED);
+        textPaintCenterSmall.setTextAlign(Paint.Align.CENTER);
 
         textPaintLeft = new Paint();
         textPaintLeft.setAntiAlias(true);
@@ -207,13 +226,38 @@ public class ArcProgressBar extends View {
      */
     private void paintText(Canvas canvas) {
         canvas.drawText("0", padding - canvasMarginSize,
-                getFontHeight() + arcProgressHeight, textPaintLeft);
+                getFontHeight(textPaintRight) + arcProgressHeight, textPaintLeft);
 
         canvas.drawText(((int) maxProgress) + "", width - (padding - canvasMarginSize),
-                getFontHeight() + arcProgressHeight, textPaintRight);
+                getFontHeight(textPaintRight) + arcProgressHeight, textPaintRight);
 
         canvas.drawText(((int) sendCurrentProgress) + "", width / 2,
-                getFontHeight() + arcProgressHeight - centerTextBottomMargin, textPaintCenter);
+                getFontHeight(textPaintRight) + arcProgressHeight - getFontHeight(textPaintCenterSmall) - centerTextBottomMargin - centerTextSpace, textPaintCenter);
+
+
+        float percent = sendCurrentProgress / maxProgress * 100;
+        String textResult = "已完成 " + dropNeedlessZeroOfNum(percent + "") + "%";
+        if (percent >= 100) {
+            textResult = "当月任务已完成";
+        }
+
+        canvas.drawText(textResult, width / 2,
+                getFontHeight(textPaintCenterSmall) + arcProgressHeight - centerTextBottomMargin, textPaintCenterSmall);
+    }
+
+    /**
+     * 删除float字符串中的多余0
+     *
+     * @param num 将要被格式化的数字字符串
+     * @return
+     */
+    private String dropNeedlessZeroOfNum(String num) {
+        if (num.indexOf(".") > 0) {
+            //正则表达
+            num = num.replaceAll("0+?$", "");//去掉后面无用的零
+            num = num.replaceAll("[.]$", "");//如小数点后面全是零则去掉小数点
+        }
+        return num;
     }
 
     /**
@@ -221,8 +265,8 @@ public class ArcProgressBar extends View {
      *
      * @return
      */
-    private int getFontHeight() {
-        Paint.FontMetrics fm = textPaintRight.getFontMetrics();
+    private int getFontHeight(Paint paint) {
+        Paint.FontMetrics fm = paint.getFontMetrics();
         return (int) (fm.descent - fm.ascent);
     }
 
@@ -273,12 +317,12 @@ public class ArcProgressBar extends View {
      * @param currentSweepAngle
      */
     public void setCurrentSweepAngle(float currentSweepAngle) {
+        sendCurrentProgress = currentSweepAngle < 0 ? 0 : currentSweepAngle;
         if (currentSweepAngle < 1) {
             currentSweepAngle = 1;
         } else if (currentSweepAngle > maxProgress) {
             currentSweepAngle = maxProgress;
         }
-        sendCurrentProgress = currentSweepAngle;
         this.currentSweepAngle = currentSweepAngle * sweepAngle / maxProgress;
         initListener();
         initHandler();
